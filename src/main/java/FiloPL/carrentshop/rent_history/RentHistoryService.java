@@ -1,0 +1,99 @@
+package FiloPL.carrentshop.rent_history;
+
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
+@Service
+public class RentHistoryService {
+
+    private final RentHistoryRepository rentHistoryRepository;
+
+    public RentHistoryService(RentHistoryRepository rentHistoryRepository) {
+        this.rentHistoryRepository = rentHistoryRepository;
+    }
+
+    public RentHistory addRentHistory (RentHistory rentHistory) {
+        return rentHistoryRepository.save(rentHistory);
+    }
+
+    public Set<RentHistory> getAllRentHistory() {
+        return new HashSet<>(rentHistoryRepository.findAll());
+    }
+
+    public Set<RentHistory> getRentHistoryByCarMark(String mark) {
+        return rentHistoryRepository.findByCar_CarModelMarkContainsIgnoreCase(mark);
+    }
+
+    public Set<RentHistory> getRentHistoryByPlateNr(String plateNr) {
+        return rentHistoryRepository.findByCar_PlateNrContainsIgnoreCase(plateNr);
+    }
+
+    public Set<RentHistory> getRentHistoryByModel(String model) {
+        return rentHistoryRepository.findByCar_CarModelModelContainsIgnoreCase(model);
+    }
+
+    public Set<RentHistory> getRentHistoryByClientName(String clientName) {
+        return rentHistoryRepository.findByClientNameContainsIgnoreCase(clientName);
+    }
+
+    public Set<RentHistory> getRentHistoryByClientEmail(String clientEmail) {
+        return rentHistoryRepository.findByClientEmailContainsIgnoreCase(clientEmail);
+    }
+
+    public Set<RentHistory> getRentHistoryByPromotionName(String promotionName) {
+        return rentHistoryRepository.findByPromotionNameContainsIgnoreCase(promotionName);
+    }
+
+    public Set<RentHistory> getRentHistoryByRentPointStartName(String rentPointStartName) {
+        return rentHistoryRepository.findByRentPointStartNameContainsIgnoreCase(rentPointStartName);
+    }
+
+    public Set<RentHistory> getRentHistoryByRentPointEndName(String rentPointEndName) {
+        return rentHistoryRepository.findByRentPointEndNameContainsIgnoreCase(rentPointEndName);
+    }
+
+    public Set<RentHistory> getRentHistoryByEmployeeStartSurname(String surname) {
+        return rentHistoryRepository.findByEmployeeStartSurnameContainsIgnoreCase(surname);
+    }
+
+    public Set<RentHistory> getRentHistoryByEmployeeEndSurname(String surname) {
+        return rentHistoryRepository.findByEmployeeEndSurnameContainsIgnoreCase(surname);
+    }
+
+    public Set<RentHistory> getRentHistoryByInvoiceNumber(String invoiceNumber) {
+        return rentHistoryRepository.findByInvoiceNumberContainsIgnoreCase(invoiceNumber);
+    }
+
+    public Set<RentHistory> getRentHistoryByRentTimeStartAfter(LocalDate rentTimeStart) {
+        return rentHistoryRepository.findByRentTimeStartAfter(rentTimeStart);
+    }
+
+    public Set<RentHistory> getRentHistoryByRentTimeEnd(LocalDate rentTimeEnd) {
+        return rentHistoryRepository.findByRentTimeEnd(rentTimeEnd);
+    }
+
+    public Set<RentHistory> searchRentHistory(String searchWhat, SearchRentHistoryOption searchRentHistoryOption){
+
+        switch(searchRentHistoryOption){
+            case BY_CAR_PLATE_NR:
+                return rentHistoryRepository.findByCar_PlateNrContainsIgnoreCase(searchWhat);
+            case BY_CLIENT_EMAIL:
+                return rentHistoryRepository.findByClientEmailContainsIgnoreCase(searchWhat);
+            case BY_INVOICE_NUMBER:
+                return rentHistoryRepository.findByInvoiceNumberContainsIgnoreCase(searchWhat);
+            case BY_EMPLOYEESTART_USERNAME:
+                return rentHistoryRepository.findByEmployeeStartUsernameContainsIgnoreCase(searchWhat);
+            case BY_EMPLOYEEEND_USERNAME:
+                return rentHistoryRepository.findByEmployeeEndUsernameContainsIgnoreCase(searchWhat);
+            case BY_RENTPOINTSTART_NAME:
+                return rentHistoryRepository.findByRentPointStartNameContainsIgnoreCase(searchWhat);
+            case BY_RENTPOINTEND_NAME:
+                return rentHistoryRepository.findByRentPointEndNameContainsIgnoreCase(searchWhat);
+        }
+
+        return new HashSet<>();
+    }
+}

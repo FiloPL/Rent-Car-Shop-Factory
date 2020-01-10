@@ -1,0 +1,97 @@
+package FiloPL.carrentshop.config;
+
+import FiloPL.carrentshop.employee.EmployeeService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+
+@Configuration
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final EmployeeService employeeService;
+    private final EmployeeAuthenticationSuccessHandler successHandler;
+
+
+    public SecurityConfig(EmployeeService employeeService, EmployeeAuthenticationSuccessHandler successHandler){
+        this.employeeService = employeeService;
+        this.successHandler = successHandler;
+    }
+
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception{
+        http.csrf()
+                .disable()
+                .authorizeRequests()
+                .antMatchers("/login")
+                .permitAll()
+                .antMatchers("/h2-console/**")
+                .permitAll()
+                .antMatchers("/")
+                .hasAnyAuthority("ADMIN", "SUPERUSER", "USER")
+                .antMatchers("/client")
+                .hasAnyAuthority("ADMIN", "SUPERUSER", "USER")
+                .antMatchers("/rent")
+                .hasAnyAuthority("ADMIN", "SUPERUSER", "USER")
+                .antMatchers("/rent/history")
+                .hasAnyAuthority("ADMIN", "SUPERUSER", "USER")
+                .antMatchers("/invoice")
+                .hasAnyAuthority("ADMIN", "SUPERUSER", "USER")
+                .antMatchers("/car")
+                .hasAnyAuthority("ADMIN", "SUPERUSER")
+                .antMatchers("/car/model")
+                .hasAnyAuthority("ADMIN", "SUPERUSER")
+                .antMatchers("/promotion")
+                .hasAnyAuthority("ADMIN", "SUPERUSER")
+                .antMatchers("/employee")
+                .hasAuthority("ADMIN")
+                .antMatchers("/company")
+                .hasAuthority("ADMIN")
+                .antMatchers("/rentPoint")
+                .hasAuthority("ADMIN")
+                .antMatchers("/**")
+                .authenticated()
+                .and()
+                .formLogin()
+                .loginPage("/login")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .successHandler(successHandler)
+                .and()
+                .exceptionHandling()
+                .accessDeniedPage("/accessDenied")
+                .and()
+                .headers()
+                .frameOptions()
+                .disable()
+                .and()
+                .logout()
+                .invalidateHttpSession(true)
+                .logoutSuccessUrl("/login?logout");
+    }
+
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+        auth.userDetailsService(employeeService).passwordEncoder(passwordEncoder());
+    }
+
+
+    @Override
+    public void configure(WebSecurity web){
+        web.ignoring().antMatchers("/resources/**", "/static/**", "/static/css/**", "/js/**", "/images/**");
+    }
+
+
+    @Bean
+    PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+}
+
