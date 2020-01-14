@@ -1,0 +1,50 @@
+package FiloPL.carrentshop.car_model;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+@RequestMapping("/car/model")
+public class CarModelController {
+    private final CarModelService carModelService;
+
+    public CarModelController(CarModelService carmodelservice) {
+        this.carModelService = carmodelservice;
+    }
+
+    @GetMapping(value = "")
+    public ModelAndView getCarModelPage(@RequestParam(required = false) String searchWhat, @RequestParam(required = false) String searchBy) {
+        ModelAndView modelAndView = new ModelAndView("carModelList");
+        modelAndView.addObject("searchByOptions", SearchCarModelOption.values());
+        if (searchWhat == null || searchBy == null || searchWhat.isEmpty() || searchBy.isEmpty()) {
+            modelAndView.addObject("isFiltered", false);
+            modelAndView.addObject("carModels", carModelService.getAllCarModels());
+        } else {
+            modelAndView.addObject("isFiltered", true);
+            modelAndView.addObject("carModels", carModelService.searchCarModels(searchWhat, SearchCarModelOption.valueOf(searchBy)));
+        }
+        return modelAndView;
+    }
+
+    @GetMapping(value = "/add")
+    public ModelAndView getCarModelAddNewModel() {
+        ModelAndView modelAndViewToAddAndEdit = new ModelAndView("carModelDetail");
+        modelAndViewToAddAndEdit.addObject("update", false);
+        return modelAndViewToAddAndEdit;
+    }
+
+    @GetMapping(value = "/{id}")
+    public ModelAndView postCarModelEditModel(@PathVariable int id) {
+        ModelAndView modelAndViewToAddAndEdit = new ModelAndView("carModelDetail");
+        modelAndViewToAddAndEdit.addObject("update", true);
+        modelAndViewToAddAndEdit.addObject("carModel", carModelService.getCarModelById(id));
+        return modelAndViewToAddAndEdit;
+    }
+
+    @PostMapping(value = "/save")
+    public String postCarModelSaveModel(@ModelAttribute CarModel carModel) {
+        carModelService.updateCarModel(carModel);
+        return "redirect:/car/model/";
+    }
+}

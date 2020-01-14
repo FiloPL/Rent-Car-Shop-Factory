@@ -1,0 +1,80 @@
+package FiloPL.carrentshop.invoice;
+
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+
+@Entity
+@Table(name = "view_invoices")
+public class InvoiceViewItem{
+    
+    @Id
+    private int id;
+    private int client_id;
+    private String clientName;
+    private String number;
+    private LocalDate invoiceDate;
+    private int rentCount;
+    private BigDecimal rentValue;
+    private int discounts;
+    private BigDecimal value;
+    private BigDecimal toPay;
+    
+    
+    public InvoiceViewItem(){
+    }
+    
+    
+    public int getId(){
+        return id;
+    }
+    
+    
+    public int getClientId(){
+        return client_id;
+    }
+    
+    
+    public String getClientName(){
+        return clientName;
+    }
+    
+    
+    public String getNumber(){
+        return number;
+    }
+    
+    
+    public LocalDate getInvoiceDate(){
+        return invoiceDate;
+    }
+    
+    
+    public int getRentCount(){
+        return rentCount;
+    }
+    
+    
+    public BigDecimal getRentValue(){
+        return rentValue;
+    }
+    
+    
+    public int getDiscounts(){
+        return discounts;
+    }
+    
+    
+    public BigDecimal getValue(){
+        return value;
+    }
+    
+    
+    public BigDecimal getToPay(){
+        return toPay;
+    }
+}
